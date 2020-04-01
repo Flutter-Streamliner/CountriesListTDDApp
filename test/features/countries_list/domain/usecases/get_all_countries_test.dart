@@ -1,4 +1,5 @@
 
+import 'package:countries_ttd/core/usecases/usecase.dart';
 import 'package:countries_ttd/features/countries_list/domain/entities/country.dart';
 import 'package:countries_ttd/features/countries_list/domain/repositories/country_repository.dart';
 import 'package:countries_ttd/features/countries_list/domain/usecases/get_all_countries.dart';
@@ -27,7 +28,7 @@ void main() {
       .thenAnswer((_) async => Right(testCountriesList));
 
     // The "act" phase of the test. Call the not-yet-existent method.
-    final result = await getAllCountriesUseCase();
+    final result = await getAllCountriesUseCase(NoParams());
 
     // UseCase should simply return whatever was returned from the Repository
     expect(result, Right(testCountriesList));
