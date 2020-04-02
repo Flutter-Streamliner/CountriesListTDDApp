@@ -1,3 +1,4 @@
+import 'package:countries_ttd/core/error/exceptions.dart';
 import 'package:countries_ttd/core/error/failures.dart';
 import 'package:countries_ttd/core/platform/network_info.dart';
 import 'package:countries_ttd/features/countries_list/data/datasources/country_local_datasource.dart';
@@ -20,8 +21,15 @@ class CountryRepositoryImpl extends CountryRepository {
   });
 
   @override
-  Future<Either<Failure, List<Country>>> getCountries() {
-    return null;
+  Future<Either<Failure, List<Country>>> getCountries() async {
+    networkInfo.isConnected;
+    try {
+      final result = await remoteDataSource.getCountries();
+      localDataSource.cacheCountry(result[0]);
+      return Right(result);
+    } on ServerException  {
+      return Left(ServerFailure());
+    }
   }
 
 }

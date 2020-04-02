@@ -1,7 +1,12 @@
+import 'package:countries_ttd/core/error/exceptions.dart';
+import 'package:countries_ttd/core/error/failures.dart';
 import 'package:countries_ttd/core/platform/network_info.dart';
 import 'package:countries_ttd/features/countries_list/data/datasources/country_local_datasource.dart';
 import 'package:countries_ttd/features/countries_list/data/datasources/country_remote_datasource.dart';
+import 'package:countries_ttd/features/countries_list/data/models/country_model.dart';
 import 'package:countries_ttd/features/countries_list/data/repositories/country_repository_impl.dart';
+import 'package:countries_ttd/features/countries_list/domain/entities/country.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -26,5 +31,57 @@ void main() {
       localDataSource: mockLocalDataSource,
       networkInfo: mockNetworkInfo
     );
+  });
+
+  final testCountryModel = CountryModel(name: 'Afghanistan', capital: 'Kabul', code: '93');
+  List<CountryModel> countries = List();
+  countries.add(testCountryModel);
+
+  group('device is online', () {
+    setUp((){
+      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+    });
+    test('should check if the device is online', 
+    () async {
+      // arrange
+      when(mockRemoteDataSource.getCountries()).thenAnswer((_) async => countries);
+      // act
+      repository.getCountries();
+      // assert
+      verify(mockNetworkInfo.isConnected);
+    });
+    
+    test('should return remote data when the call to remote data source is successful', () async {
+      when(mockRemoteDataSource.getCountries()).thenAnswer((_) async => countries);
+      // act
+      final result = await repository.getCountries();
+      // assert
+      verify(mockRemoteDataSource.getCountries());
+      expect(result, Right(countries));
+    });
+
+    test('should cache the data locally when the call to remote data source is successful', () async {
+      // arrange 
+      when(mockRemoteDataSource.getCountries()).thenAnswer((_) async => countries);
+      // act
+      await repository.getCountries();
+      // assert
+      verify(mockRemoteDataSource.getCountries());
+      verify(mockLocalDataSource.cacheCountry(testCountryModel));
+    });
+
+    test('should return server failure when the call to remote data source is unsuccessful', () async {
+      // arrange
+      when(mockRemoteDataSource.getCountries()).thenThrow(ServerException());
+      // act
+      final result = await repository.getCountries();
+      // assert
+      expect(result, Left(ServerFailure()));
+      verifyZeroInteractions(mockLocalDataSource);
+    });
+  });
+
+  group('device offline', () {
+    
   });
 }
