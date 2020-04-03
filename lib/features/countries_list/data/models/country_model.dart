@@ -23,4 +23,7 @@ class CountryModel extends Country {
       'callingCodes': [code]
     };
   }
+
+  @override
+  String toString() => 'CountryModel{name = $name, capital = $capital, code = $code}';
 }
