@@ -1,6 +1,6 @@
 import 'package:countries_ttd/core/error/exceptions.dart';
 import 'package:countries_ttd/core/error/failures.dart';
-import 'package:countries_ttd/core/platform/network_info.dart';
+import 'package:countries_ttd/core/network/network_info.dart';
 import 'package:countries_ttd/features/countries_list/data/datasources/country_local_datasource.dart';
 import 'package:countries_ttd/features/countries_list/data/datasources/country_remote_datasource.dart';
 import 'package:countries_ttd/features/countries_list/domain/entities/country.dart';
