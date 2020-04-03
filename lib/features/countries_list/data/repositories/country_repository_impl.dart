@@ -22,13 +22,21 @@ class CountryRepositoryImpl extends CountryRepository {
 
   @override
   Future<Either<Failure, List<Country>>> getCountries() async {
-    networkInfo.isConnected;
-    try {
-      final result = await remoteDataSource.getCountries();
-      localDataSource.cacheCountry(result[0]);
-      return Right(result);
-    } on ServerException  {
-      return Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        final countries = await remoteDataSource.getCountries();
+        localDataSource.cacheCountries(countries);
+        return Right(countries);
+      } on ServerException  {
+        return Left(ServerFailure());
+      }
+    } else {
+      try {
+        final cachedCountries = await localDataSource.getCacheCountries();
+        return Right(cachedCountries);
+      } on CacheException {
+        return Left(CacheFailure());
+      }
     }
   }
 
