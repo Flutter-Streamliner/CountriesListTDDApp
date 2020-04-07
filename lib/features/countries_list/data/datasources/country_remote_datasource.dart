@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:countries_ttd/core/error/exceptions.dart';
 import 'package:countries_ttd/features/countries_list/data/models/country_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 abstract class CountryRemoteDataSource {
   /// Calls the https://restcountries.eu/rest/v2/all endpoint.
@@ -14,7 +14,7 @@ abstract class CountryRemoteDataSource {
 
 class CountryRemoteDataSourceImpl implements CountryRemoteDataSource {
 
-  final http.Client client;
+  final Client client;
 
   CountryRemoteDataSourceImpl({@required this.client});
 

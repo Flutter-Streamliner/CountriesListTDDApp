@@ -7,6 +7,7 @@ import 'package:countries_ttd/features/countries_list/domain/usecases/get_all_co
 import 'package:countries_ttd/features/countries_list/presentation/bloc/country_bloc.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,6 +40,6 @@ Future<void> init() async {
   // ! External
   final sharedPreferences = await SharedPreferences.getInstance();
   serviceLocator.registerLazySingleton(() => sharedPreferences);
-  serviceLocator.registerLazySingleton(() => http.Client);
+  serviceLocator.registerLazySingleton<Client>(() => Client());
   serviceLocator.registerLazySingleton(() => DataConnectionChecker());
 }
